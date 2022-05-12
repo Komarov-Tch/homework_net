@@ -43,6 +43,22 @@ class Unit:
                 return True
             return False
 
+    def __str__(self):
+        text = ''
+        if self.__class__.__name__ == 'Student':
+            text = f'Имя: {self.name}\nФамилия: {self.surname}\n' \
+                   f'Средняя оценка за домашние задания всех курсов: {self.averange_score()}\n' \
+                   f'Курсы в процессе изучения: {" ".join(self.courses_in_progress)}\n' \
+                   f'Завершенные курсы: {" ".join(self.finished_courses)}'
+        elif self.__class__.__name__ == 'Lecturer':
+            text = f'Имя: {self.name}\n' \
+                   f'Фамилия: {self.surname}\n' \
+                   f'Средняя оценка за лекции всех курсов : {self.averange_score()}'
+        elif self.__class__.__name__ == 'Reviewer':
+            text = f'Имя: {self.name}\n' \
+                   f'Фамилия: {self.surname}'
+        return text
+
     # Так же, т.к. логика подсчета среднего балла ученика за 1 курс и за все курсы,
     # и оценок лекторов одинакова, вынес в методы в 1 класс.
     # Так же, что бы работало только на лекторов и студентов, сделал проверки на эти классы
@@ -74,13 +90,6 @@ class Student(Unit):
         else:
             return 'Ошибка'
 
-    def __str__(self):
-        return f'Имя: {self.name}\n' \
-               f'Фамилия: {self.surname}\n' \
-               f'Средняя оценка за домашние задания всех курсов: {self.averange_score()}\n' \
-               f'Курсы в процессе изучения: {" ".join(self.courses_in_progress)}\n' \
-               f'Завершенные курсы: {" ".join(self.finished_courses)}'
-
 
 class Mentor(Unit):
     def __init__(self, name, surname):
@@ -94,9 +103,6 @@ class Lecturer(Mentor):
         super().__init__(name, surname)
         self.grades = {}
 
-    def __str__(self):
-        return f'Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за лекции всех курсов : {self.averange_score()}'
-
 
 class Reviewer(Mentor):
     def __init__(self, name, surname):
@@ -108,27 +114,25 @@ class Reviewer(Mentor):
         else:
             return 'Ошибка'
 
-    def __str__(self):
-        return f'Имя: {self.name}\nФамилия: {self.surname}'
 
-
-def averange_score_students(list_of_students, name_course):
-    return sum([i.averange_score_of_course(name_course) for i in list_of_students]) / len(list_of_students)
-
-
-def averange_score_lecturer(list_of_lecturer, name_course):
-    return sum([i.averange_score_of_course(name_course) for i in list_of_lecturer]) / len(list_of_lecturer)
+def averange(lst, name_course):
+    return sum([person.averange_score_of_course(name_course) for person in lst]) / len(lst)
 
 
 student1 = Student('Ivan', 'Petrov', 'male')
 student2 = Student('Svetlana', 'Ivanova', 'female')
+student3 = Student('Ekaterina', 'Plotnikova', 'female')
+student4 = Student('Georgiy', 'Kac', 'female')
 reviewer1 = Reviewer('Sergey', 'Vasiliev')
 reviewer2 = Reviewer('Petr', 'Sas')
 lecturer1 = Lecturer('Vlad', 'Klop')
 lecturer2 = Lecturer('Alisa', 'Voinova')
+lecturer3 = Lecturer('Polina', 'Gagarina')
 
 student1.courses_in_progress += ['Python']
 student2.courses_in_progress += ['Java']
+student3.courses_in_progress += ['Python']
+student4.courses_in_progress += ['Python']
 student1.finished_courses += ['C++']
 student2.finished_courses += ['Goland']
 
@@ -136,10 +140,15 @@ reviewer1.courses_attached += ['Python', 'C++']
 reviewer2.courses_attached += ['Java', 'Goland']
 lecturer1.courses_attached += ['Python', 'C++']
 lecturer2.courses_attached += ['Java', 'Goland']
+lecturer3.courses_attached += ['Python']
 
 student1.rate_lectore(lecturer1, 'Python', 10)
-student1.rate_lectore(lecturer1, 'Python', 10)
+student1.rate_lectore(lecturer3, 'Python', 10)
 student1.rate_lectore(lecturer1, 'Python', 9.8)
+student3.rate_lectore(lecturer3, 'Python', 7)
+student3.rate_lectore(lecturer1, 'Python', 6)
+student3.rate_lectore(lecturer1, 'Python', 9)
+student4.rate_lectore(lecturer3, 'Python', 9.9)
 
 student2.rate_lectore(lecturer2, 'Java', 9.9)
 student2.rate_lectore(lecturer2, 'Java', 9.9)
@@ -148,6 +157,12 @@ student2.rate_lectore(lecturer2, 'Java', 10)
 reviewer1.rate_hw(student1, 'Python', 7.5)
 reviewer1.rate_hw(student1, 'Python', 8.0)
 reviewer1.rate_hw(student1, 'Python', 9.9)
+reviewer1.rate_hw(student3, 'Python', 7.5)
+reviewer1.rate_hw(student3, 'Python', 8.0)
+reviewer1.rate_hw(student3, 'Python', 7.9)
+reviewer1.rate_hw(student4, 'Python', 5.5)
+reviewer1.rate_hw(student4, 'Python', 9.0)
+reviewer1.rate_hw(student4, 'Python', 6.9)
 
 reviewer2.rate_hw(student2, 'Java', 10)
 reviewer2.rate_hw(student2, 'Java', 7)
@@ -170,3 +185,9 @@ print(student1 <= student2)
 print(student1)
 print(lecturer1)
 print(reviewer1)
+print(student4)
+list_of_lect = [lecturer1, lecturer3]
+list_of_st = [student1, student3, student4]
+
+print(f"Средний рейтинг лекторов курса Python: {(averange(list_of_lect, 'Python')):0.1f}")
+print(f"Средний балл студентов курса Python: {(averange(list_of_st, 'Python')):0.1f}")
