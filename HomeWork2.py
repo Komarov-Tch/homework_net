@@ -122,7 +122,7 @@ def averange(lst, name_course):
 student1 = Student('Ivan', 'Petrov', 'male')
 student2 = Student('Svetlana', 'Ivanova', 'female')
 student3 = Student('Ekaterina', 'Plotnikova', 'female')
-student4 = Student('Georgiy', 'Kac', 'female')
+student4 = Student('Georgiy', 'Kac', 'male')
 reviewer1 = Reviewer('Sergey', 'Vasiliev')
 reviewer2 = Reviewer('Petr', 'Sas')
 lecturer1 = Lecturer('Vlad', 'Klop')
